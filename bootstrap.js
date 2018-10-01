@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 
-const {argv, targetCpu, execSync, spawnSync} = require('./lib/common')
+const {argv, execSync, spawnSync} = require('./lib/common')
 
 const path = require('path')
 
 // Parse args.
 let skipGclient = false
 let extraArgs = ''
+let targetCpu = 'x64'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
   else if (arg.startsWith('--args='))
     extraArgs = arg.substr(arg.indexOf('=') + 1)
+  else if (arg.startsWith('--target-cpu='))
+    targetCpu = arg.substr(arg.indexOf('=') + 1)
 }
 
 // Update submodules.
