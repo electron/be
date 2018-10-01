@@ -7,4 +7,4 @@ let config = 'Default'
 if (argv.length === 1)
   config = argv[0]
 
-execSync(`ninja -C src/out/${config}`)
+execSync(`ninja -C src/out/${config} electron`)

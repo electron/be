@@ -1,3 +1,4 @@
+*.swp
 .gclient_entries
 src/
 _gclient_src_*/

@@ -19,7 +19,7 @@ Build:
 Run tests:
 
 ```
-./test.js [configuration] [-arbitrary-args-passed-to-spec...]
+./test.js [configuration] [--force-install-modules] [-arbitrary-args-passed-to-spec...]
 ```
 
 ## Configuration names
