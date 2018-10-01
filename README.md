@@ -1,6 +1,8 @@
 # be
 
-Set of scripts for building electron.
+Scripts to help building Electron.
+
+(I'm still exploring what's the best way, hold on using this.)
 
 ## Usage
 
