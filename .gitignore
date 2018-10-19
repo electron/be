@@ -1,4 +1,5 @@
 *.swp
 .gclient_entries
+.cipd/
 src/
 _gclient_src_*/
