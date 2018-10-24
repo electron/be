@@ -1,5 +1,6 @@
 *.swp
 .gclient_entries
+_gclient_src_*/
 .cipd/
 src/
-_gclient_src_*/
+vendor/depot_tools

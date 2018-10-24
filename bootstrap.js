@@ -2,6 +2,7 @@
 
 const {argv, execSync, spawnSync} = require('./lib/common')
 
+const fs = require('fs')
 const path = require('path')
 
 // Parse args.
@@ -17,9 +18,10 @@ for (const arg of argv) {
     targetCpu = arg.substr(arg.indexOf('=') + 1)
 }
 
-// Update submodules.
-execSync('git submodule sync --recursive')
-execSync('git submodule update --init --recursive')
+// Fetch depot_tools.
+const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
+if (!fs.existsSync(path.join('vendor', 'depot_tools')))
+  execSync(`git clone ${DEPOT_TOOLS_URL} vendor/depot_tools`)
 
 // Getting the code.
 if (!skipGclient)
