@@ -28,10 +28,12 @@ if (!fs.existsSync(path.join('vendor', 'depot_tools')))
 
 // Getting the code.
 if (!skipGclient) {
-  let args = ''
+  let args = '--with_branch_heads --with_tags'
   if (force)
     args += ' --force'
-  execSync(`gclient sync --with_branch_heads --with_tags ${args}`)
+  // Calling gclient directly would invoke gclient.bat on Windows, which does
+  // not work prefectly under some shells.
+  execSync(`python vendor/depot_tools/gclient.py sync ${args}`)
 }
 
 // Switch to src dir.
@@ -47,5 +49,5 @@ const sccachePath = path.resolve('electron', 'external_binaries', 'sccache')
 for (const name in configs) {
   const config = targetCpu === 'x64' ? name : `${name}_${targetCpu}`
   const gnArgs = `import("//electron/build/args/${configs[name]}.gn") ${extraArgs} target_cpu="${targetCpu}" cc_wrapper="${sccachePath}"`
-  spawnSync('gn', ['gen', `out/${config}`, `--args=${gnArgs}`])
+  spawnSync('python', ['third_party/depot_tools/gn.py', 'gen', `out/${config}`, `--args=${gnArgs}`])
 }
