@@ -7,11 +7,14 @@ const path = require('path')
 
 // Parse args.
 let skipGclient = false
+let force = false
 let extraArgs = ''
 let targetCpu = 'x64'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
+  else if (arg === '--force')
+    force = true
   else if (arg.startsWith('--args='))
     extraArgs = arg.substr(arg.indexOf('=') + 1)
   else if (arg.startsWith('--target-cpu='))
@@ -24,8 +27,12 @@ if (!fs.existsSync(path.join('vendor', 'depot_tools')))
   execSync(`git clone ${DEPOT_TOOLS_URL} vendor/depot_tools`)
 
 // Getting the code.
-if (!skipGclient)
-  execSync('gclient sync --with_branch_heads --with_tags')
+if (!skipGclient) {
+  let args = ''
+  if (force)
+    args += ' --force'
+  execSync(`gclient sync --with_branch_heads --with_tags ${args}`)
+}
 
 // Switch to src dir.
 process.chdir('src')
