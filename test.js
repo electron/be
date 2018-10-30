@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {argv, execSync} = require('./lib/common')
+const {argv, execSync, spawnSync} = require('./lib/common')
 
 const fs = require('fs')
 const path = require('path')
@@ -32,4 +32,4 @@ let electron = {
   'darwin': 'Electron.app/Contents/MacOS/Electron',
 }[process.platform]
 
-execSync(`src/out/${config}/${electron} src/electron/spec ${extraArgs.join(' ')}`)
+spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec'].concat(extraArgs))
