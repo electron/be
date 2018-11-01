@@ -9,11 +9,7 @@ const sccache = path.resolve('src', 'electron', 'external_binaries', 'sccache')
 try {
   execSync(`${sccache}  --start-server`, {stdio: 'pipe'})
 } catch (e) {
-  // Print error if not the server already running error.
-  if (!e.stderr.toString().startsWith('error: Server startup error')) {
-    process.stderr.write(`sccache server failed to start:\n${e.stderr}`)
-    process.exit(1)
-  }
+  // Ignore error of sccache.
 }
 
 // The configuration to build.
