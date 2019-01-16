@@ -7,12 +7,15 @@ const path = require('path')
 
 // Parse args.
 let skipGclient = false
+let noHistory = false
 let force = false
 let extraArgs = ''
 let targetCpu = 'x64'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
+  else if (arg === '--no-history')
+    noHistory = true
   else if (arg === '--force')
     force = true
   else if (arg.startsWith('--args='))
@@ -28,7 +31,8 @@ if (!fs.existsSync(path.join('vendor', 'depot_tools')))
 
 // Getting the code.
 if (!skipGclient) {
-  let args = '--with_branch_heads --with_tags'
+  let args = noHistory ? '--no-history'
+                       : '--with_branch_heads --with_tags'
   if (force)
     args += ' --force'
   // Calling gclient directly would invoke gclient.bat on Windows, which does
