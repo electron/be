@@ -9,7 +9,7 @@ Scripts to help building Electron.
 Bootstrap:
 
 ```
-./bootstrap.js [--skip-gclient] [--no-history] [--force] [--args=""] [--target-arch=x64] [--verbose]
+./bootstrap.js [--skip-gclient] [--no-history] [--force] [--args=""] [--target-cpu=x64] [--verbose]
 ```
 
 Build:
