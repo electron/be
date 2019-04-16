@@ -52,6 +52,8 @@ const configs = {
 const sccachePath = path.resolve('electron', 'external_binaries', 'sccache')
 for (const name in configs) {
   const config = targetCpu === 'x64' ? name : `${name}_${targetCpu}`
-  const gnArgs = `import("//electron/build/args/${configs[name]}.gn") ${extraArgs} target_cpu="${targetCpu}" cc_wrapper="${sccachePath}"`
+  let gnArgs = `import("//electron/build/args/${configs[name]}.gn") ${extraArgs} target_cpu="${targetCpu}"`
+  if (!(targetCpu === 'x86' && process.platform === 'win32'))
+    gnArgs += ` cc_wrapper="${sccachePath}"`
   spawnSync('python', ['third_party/depot_tools/gn.py', 'gen', `out/${config}`, `--args=${gnArgs}`])
 }
