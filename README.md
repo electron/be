@@ -38,7 +38,6 @@ This project uses following convention for configuration names.
 ## Development conventions
 
 * No `package.json` or `npm install`.
-* Put third party modules as single file under `lib`.
 
 ## License
 

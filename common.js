@@ -14,7 +14,7 @@ const argv = process.argv.slice(2).filter((arg) => {
 })
 
 // Switch to root dir.
-process.chdir(path.dirname(__dirname))
+process.chdir(__dirname)
 
 // We are not using toolchain from depot_tools.
 process.env.DEPOT_TOOLS_WIN_TOOLCHAIN = 0

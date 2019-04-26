@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {argv, execSync} = require('./lib/common')
+const {argv, execSync} = require('./common')
 
 const path = require('path')
 
