@@ -9,13 +9,18 @@ const path = require('path')
 let config = 'Default'
 let extraArgs = argv
 let forceInstallModules = false
+let runMainTests = true
+let runRendererTests = true
 if (argv.length > 0 && !argv[0].startsWith('-')) {
   config = argv[0]
   extraArgs = argv.slice(1)
 }
-if (argv.includes('--force-install-modules')) {
+if (argv.includes('--force-install-modules'))
   forceInstallModules = true
-}
+if (argv.includes('--only-main-process'))
+  runRendererTests = false
+if (argv.includes('--only-renderer-process'))
+  runMainTests = false
 
 // Install npm modules for tests.
 const specDir = path.resolve('src', 'electron', 'spec')
@@ -32,5 +37,7 @@ let electron = {
   'darwin': 'Electron.app/Contents/MacOS/Electron',
 }[process.platform]
 
-spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec-main'].concat(extraArgs))
-spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec'].concat(extraArgs))
+if (runMainTests)
+  spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec-main'].concat(extraArgs))
+if (runRendererTests)
+  spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec'].concat(extraArgs))
