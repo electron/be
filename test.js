@@ -32,4 +32,5 @@ let electron = {
   'darwin': 'Electron.app/Contents/MacOS/Electron',
 }[process.platform]
 
+spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec-main'].concat(extraArgs))
 spawnSync(`src/out/${config}/${electron}`, ['src/electron/spec'].concat(extraArgs))
