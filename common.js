@@ -20,7 +20,7 @@ process.chdir(__dirname)
 process.env.DEPOT_TOOLS_WIN_TOOLCHAIN = 0
 
 // Enable sccache.
-process.env.SCCACHE_BUCKET = 'electronjs-sccache'
+process.env.SCCACHE_BUCKET = 'electronjs-sccache-ci'
 process.env.SCCACHE_TWO_TIER = 'true'
 
 // Help gn.py find the exe.
