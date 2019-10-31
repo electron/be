@@ -24,10 +24,14 @@ if (argv.includes('--only-renderer-process'))
 
 // Install npm modules for tests.
 const specDir = path.resolve('src', 'electron', 'spec')
-if (!fs.existsSync(path.join(specDir, 'node_modules')) || forceInstallModules) {
+const specMainDir = path.resolve('src', 'electron', 'spec-main')
+if (!fs.existsSync(path.join(specDir, 'node_modules')) ||
+    !fs.existsSync(path.join(specMainDir, 'node_modules')) ||
+    forceInstallModules) {
   const headers = path.resolve('src', 'out', config, 'gen', 'node_headers')
   execSync(`ninja -C src/out/${config} third_party/electron_node:headers`)
   execSync(`npm i --nodedir=${headers}`, {cwd: specDir})
+  execSync(`npm i --nodedir=${headers}`, {cwd: specMainDir})
 }
 
 // Path to Electron.
