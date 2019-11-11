@@ -45,7 +45,6 @@ process.chdir('src')
 
 // Generate configurations.
 const configs = {
-  'Debug': 'debug',
   'Release': 'release',
   'Default': 'testing',
 }
