@@ -8,7 +8,8 @@ const path = require('path')
 // Parse args.
 let skipGclient = false
 let noHistory = false
-let force = false
+let noDelete = false
+let noForce = false
 let extraArgs = ''
 let targetCpu = 'x64'
 for (const arg of argv) {
@@ -16,24 +17,46 @@ for (const arg of argv) {
     skipGclient = true
   else if (arg === '--no-history')
     noHistory = true
-  else if (arg === '--force')
-    force = true
+  else if (arg === '--no-delete')
+    noDelete = true
+  else if (arg === '--no-force')
+    noForce = true
   else if (arg.startsWith('--args='))
     extraArgs = arg.substr(arg.indexOf('=') + 1)
   else if (arg.startsWith('--target-cpu='))
     targetCpu = arg.substr(arg.indexOf('=') + 1)
 }
 
-// Fetch depot_tools.
-const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
-if (!fs.existsSync(path.join('vendor', 'depot_tools')))
-  execSync(`git clone ${DEPOT_TOOLS_URL} vendor/depot_tools`)
-
-// Getting the code.
 if (!skipGclient) {
+  // Fetch depot_tools.
+  const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
+  const depotToolsDir = path.join('vendor', 'depot_tools')
+  if (fs.existsSync(depotToolsDir))
+    execSync('git pull', {stdio: 'pipe', cwd: depotToolsDir})
+  else
+    execSync(`git clone ${DEPOT_TOOLS_URL} ${depotToolsDir}`)
+
+  // If the repo is already fetched, try to reset it first.
+  if (!noForce) {
+    const electronDir = path.join('src', 'electron')
+    if (fs.existsSync(electronDir)) {
+      // Get the chromium commit to checkout.
+      const content = String(fs.readFileSync(path.join(electronDir, 'DEPS')))
+      const commit = content.substr(content.indexOf("'chromium_version':") + 19)
+                            .match(/'([0-9a-h]+)'/)[1]
+      // Reset.
+      execSync('git checkout master', {stdio: 'pipe', cwd: electronDir})
+      execSync('git fetch', {stdio: 'pipe', cwd: electronDir})
+      execSync(`git reset --hard ${commit}`, {stdio: 'pipe', cwd: 'src'})
+    }
+  }
+
+  // Getting the code.
   let args = noHistory ? '--no-history'
                        : '--with_branch_heads --with_tags'
-  if (force)
+  if (!noDelete)
+    args += ' -D'
+  if (!noForce)
     args += ' --force'
   // Calling gclient directly would invoke gclient.bat on Windows, which does
   // not work prefectly under some shells.
