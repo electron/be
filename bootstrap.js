@@ -8,7 +8,6 @@ const path = require('path')
 // Parse args.
 let skipGclient = false
 let noHistory = false
-let noDelete = false
 let noForce = false
 let extraArgs = ''
 let targetCpu = 'x64'
@@ -17,8 +16,6 @@ for (const arg of argv) {
     skipGclient = true
   else if (arg === '--no-history')
     noHistory = true
-  else if (arg === '--no-delete')
-    noDelete = true
   else if (arg === '--no-force')
     noForce = true
   else if (arg.startsWith('--args='))
@@ -54,8 +51,6 @@ if (!skipGclient) {
   // Getting the code.
   let args = noHistory ? '--no-history'
                        : '--with_branch_heads --with_tags'
-  if (!noDelete)
-    args += ' -D'
   if (!noForce)
     args += ' --force'
   // Calling gclient directly would invoke gclient.bat on Windows, which does
