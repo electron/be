@@ -43,7 +43,7 @@ if (!skipGclient) {
                             .match(/'([0-9a-h]+)'/)[1]
       // Reset.
       execSync('git checkout master', {stdio: 'pipe', cwd: electronDir})
-      execSync('git fetch', {stdio: 'pipe', cwd: electronDir})
+      execSync('git fetch', {cwd: electronDir})
       execSync(`git reset --hard ${commit}`, {stdio: 'pipe', cwd: 'src'})
     }
   }
