@@ -42,8 +42,8 @@ if (!skipGclient) {
       const commit = content.substr(content.indexOf("'chromium_version':") + 19)
                             .match(/'([0-9a-h]+)'/)[1]
       // Reset.
-      execSync('git checkout master', {stdio: 'pipe', cwd: electronDir})
-      execSync('git fetch', {cwd: electronDir})
+      execSync('git checkout master', {stdio: 'pipe', cwd: 'src'})
+      execSync('git fetch', {cwd: 'src'})
       execSync(`git reset --hard ${commit}`, {stdio: 'pipe', cwd: 'src'})
     }
   }
