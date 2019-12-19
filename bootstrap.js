@@ -40,7 +40,7 @@ if (!skipGclient) {
       // Get the chromium commit to checkout.
       const content = String(fs.readFileSync(path.join(electronDir, 'DEPS')))
       const commit = content.substr(content.indexOf("'chromium_version':") + 19)
-                            .match(/'([0-9a-h]+)'/)[1]
+                            .match(/'([0-9a-h\.]+)'/)[1]
       // Reset.
       execSync('git checkout master', {stdio: 'pipe', cwd: 'src'})
       execSync('git fetch', {cwd: 'src'})
