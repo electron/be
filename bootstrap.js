@@ -28,10 +28,16 @@ if (!skipGclient) {
   // Fetch depot_tools.
   const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
   const depotToolsDir = path.join('vendor', 'depot_tools')
-  if (fs.existsSync(depotToolsDir))
+  if (fs.existsSync(depotToolsDir)) {
+    execSync('git checkout master', {stdio: 'pipe', cwd: depotToolsDir})
     execSync('git pull', {stdio: 'pipe', cwd: depotToolsDir})
-  else
+  } else {
     execSync(`git clone ${DEPOT_TOOLS_URL} ${depotToolsDir}`)
+  }
+
+  // Must bootstrap depot tools on Windows.
+  if (process.platform === 'win32')
+    execSync(path.join(depotToolsDir, 'bootstrap', 'win_tools.bat'))
 
   // If the repo is already fetched, try to reset it first.
   if (!noForce) {

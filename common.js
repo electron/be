@@ -43,15 +43,6 @@ if (process.platform === 'win32') {
 // Add depot_tools to PATH.
 process.env.PATH = `${path.resolve('vendor', 'depot_tools')}${path.delimiter}${process.env.PATH}`
 
-if (process.platform === 'win32') {
-  // Prefer git from depot_tools, the default one could come from cygwin.
-  const gitDir = path.resolve('vendor', 'depot_tools', 'win_tools-2_7_6_bin', 'git', 'bin')
-  process.env.PATH = `${gitDir}${path.delimiter}${process.env.PATH}`
-
-  // Prefer system python, the one from depot_tools is too old.
-  process.env.PATH = `C:\\Python27${path.delimiter}${process.env.PATH}`
-}
-
 // Helper around execSync.
 const execSyncWrapper = (command, options = {}) => {
   // Print command output by default.
