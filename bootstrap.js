@@ -9,6 +9,7 @@ const path = require('path')
 let skipGclient = false
 let noHistory = false
 let noForce = false
+let noGoma = false
 let extraArgs = ''
 let targetCpu = 'x64'
 for (const arg of argv) {
@@ -18,6 +19,8 @@ for (const arg of argv) {
     noHistory = true
   else if (arg === '--no-force')
     noForce = true
+  else if (arg === '--no-goma')
+    noGoma = true
   else if (arg.startsWith('--args='))
     extraArgs = arg.substr(arg.indexOf('=') + 1)
   else if (arg.startsWith('--target-cpu='))
@@ -64,6 +67,26 @@ if (!skipGclient) {
   execSync(`python vendor/depot_tools/gclient.py sync ${args}`)
 }
 
+// Fetch build-tools.
+const BUILD_TOOLS_URL = 'https://github.com/electron/build-tools'
+const buildToolsDir = path.join('vendor', 'build-tools')
+if (fs.existsSync(buildToolsDir)) {
+  execSync('git checkout master', {stdio: 'pipe', cwd: buildToolsDir})
+  execSync('git pull', {stdio: 'pipe', cwd: buildToolsDir})
+} else {
+  execSync(`git clone ${BUILD_TOOLS_URL} ${buildToolsDir}`)
+}
+
+const goma = require('./vendor/build-tools/src/utils/goma')
+
+// Ensure goma is initialized.
+if (!noGoma) {
+  const thirdPartyDir = path.join(buildToolsDir, 'third_party')
+  if (!fs.existsSync(thirdPartyDir))
+    fs.mkdirSync(thirdPartyDir)
+  goma.downloadAndPrepare()
+}
+
 // Switch to src dir.
 process.chdir('src')
 
@@ -72,11 +95,13 @@ const configs = {
   'Release': 'release',
   'Default': 'testing',
 }
-const sccachePath = path.resolve('electron', 'external_binaries', 'sccache')
 for (const name in configs) {
   const config = targetCpu === 'x64' ? name : `${name}_${targetCpu}`
-  let gnArgs = `import("//electron/build/args/${configs[name]}.gn") ${extraArgs} target_cpu="${targetCpu}"`
-  if (!(targetCpu === 'x86' && process.platform === 'win32'))
-    gnArgs += ` cc_wrapper="${sccachePath}"`
+  let gnArgs = [
+    `import("//electron/build/args/${configs[name]}.gn")`,
+    noGoma ? '' : `import("${goma.gnFilePath}")`,
+    `target_cpu="${targetCpu}"`,
+    extraArgs,
+  ].join(' ' )
   spawnSync('python', ['third_party/depot_tools/gn.py', 'gen', `out/${config}`, `--args=${gnArgs}`])
 }

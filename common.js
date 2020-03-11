@@ -19,10 +19,6 @@ process.chdir(__dirname)
 // We are not using toolchain from depot_tools.
 process.env.DEPOT_TOOLS_WIN_TOOLCHAIN = 0
 
-// Enable sccache.
-process.env.SCCACHE_BUCKET = 'electronjs-sccache-ci'
-process.env.SCCACHE_TWO_TIER = 'true'
-
 // Help gn.py find the exe.
 process.env.CHROMIUM_BUILDTOOLS_PATH = path.resolve('src', 'buildtools')
 

@@ -4,3 +4,4 @@ _gclient_src_*/
 .cipd/
 src/
 vendor/depot_tools
+vendor/build-tools

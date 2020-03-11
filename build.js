@@ -2,25 +2,22 @@
 
 const {argv, execSync} = require('./common')
 
-const path = require('path')
-
-// Make sure sccache server is up.
-const sccache = path.resolve('src', 'electron', 'external_binaries', 'sccache')
-while (true) {
-  try {
-    execSync(`${sccache} -s`, {stdio: 'pipe'})
-    break
-  } catch (e) {
-    if (!e.message.includes('error: Connection to server timed out') &&
-        !e.message.includes('error: failed to get stats from server')) {
-      throw e
-    }
-  }
-}
+const fs = require('fs')
+const os = require('os')
 
 // The configuration to build.
 let config = 'Default'
 if (argv.length === 1)
   config = argv[0]
+const outDir = `src/out/${config}`
 
-execSync(`ninja -C src/out/${config} electron`)
+let jobs = os.cpus().length
+const useGoma = fs.readFileSync(outDir + '/args.gn').toString().includes('goma.gn')
+if (useGoma) {
+  const goma = require('./vendor/build-tools/src/utils/goma')
+  goma.auth()
+  goma.ensure()
+  jobs = process.platform === 'darwin' ? 50 : 200
+}
+
+execSync(`ninja -j ${jobs} -C ${outDir} electron`)
