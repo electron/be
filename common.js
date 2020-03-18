@@ -22,8 +22,8 @@ process.env.DEPOT_TOOLS_WIN_TOOLCHAIN = 0
 // Help gn.py find the exe.
 process.env.CHROMIUM_BUILDTOOLS_PATH = path.resolve('src', 'buildtools')
 
-// Cleanup the cygwin paths in PATH, otherwise vpython will not work.
 if (process.platform === 'win32') {
+  // Cleanup the cygwin paths in PATH, otherwise vpython will not work.
   let newPaths = []
   const paths = process.env.PATH.split(path.delimiter)
   for (const p of paths) {
@@ -34,6 +34,12 @@ if (process.platform === 'win32') {
     newPaths.push(p)
   }
   process.env.PATH = newPaths.join(path.delimiter)
+
+  // Fix encoding error in python.
+  process.env.PYTHONIOENCODING = 'utf-8'
+
+  // HOME may be different under cygwin, so use a fixed path.
+  process.env.GOMA_OAUTH2_CONFIG_FILE = path.resolve('.goma_oauth2_config')
 }
 
 // Add depot_tools to PATH.
