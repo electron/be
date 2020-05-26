@@ -17,7 +17,7 @@ if (useGoma) {
   const goma = require('./vendor/build-tools/src/utils/goma')
   goma.auth()
   goma.ensure()
-  jobs = process.platform === 'darwin' ? 50 : 200
+  jobs = 200
 }
 
 execSync(`ninja -j ${jobs} -C ${outDir} electron`)
