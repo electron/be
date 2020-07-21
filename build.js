@@ -7,8 +7,13 @@ const os = require('os')
 
 // The configuration to build.
 let config = 'Default'
-if (argv.length === 1)
+if (argv.length >= 1)
   config = argv[0]
+let target = 'electron'
+if (argv.length >= 2)
+  target = argv[1]
+
+
 const outDir = `src/out/${config}`
 
 let jobs = os.cpus().length
@@ -20,4 +25,4 @@ if (useGoma) {
   jobs = 200
 }
 
-execSync(`ninja -j ${jobs} -C ${outDir} electron`)
+execSync(`ninja -j ${jobs} -C ${outDir} ${target}`)
