@@ -20,7 +20,7 @@ let jobs = os.cpus().length
 const useGoma = fs.readFileSync(outDir + '/args.gn').toString().includes('goma.gn')
 if (useGoma) {
   const goma = require('./vendor/build-tools/src/utils/goma')
-  goma.auth({})
+  goma.auth({gomaOneForAll: true})
   goma.ensure()
   jobs = 200
 }

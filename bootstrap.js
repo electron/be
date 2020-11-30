@@ -84,7 +84,7 @@ if (!noGoma) {
   const thirdPartyDir = path.join(buildToolsDir, 'third_party')
   if (!fs.existsSync(thirdPartyDir))
     fs.mkdirSync(thirdPartyDir)
-  goma.downloadAndPrepare({})
+  goma.downloadAndPrepare({gomaOneForAll: true})
 }
 
 // Switch to src dir.
