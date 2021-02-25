@@ -17,9 +17,9 @@ if (argv.length > 0 && !argv[0].startsWith('-')) {
 }
 if (argv.includes('--force-install-modules'))
   forceInstallModules = true
-if (argv.includes('--only-main-process'))
+if (argv.includes('--only-main-process') || argv.includes('-m'))
   runRendererTests = false
-if (argv.includes('--only-renderer-process'))
+if (argv.includes('--only-renderer-process') || argv.includes('-r'))
   runMainTests = false
 
 // Install npm modules for tests.
