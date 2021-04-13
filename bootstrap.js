@@ -53,7 +53,7 @@ if (!skipGclient) {
       // Reset.
       execSync('git checkout master', {stdio: 'pipe', cwd: 'src'})
       execSync('git fetch', {cwd: 'src'})
-      execSync(`git reset --hard ${commit}`, {stdio: 'pipe', cwd: 'src'})
+      execSync(`git reset --hard ${commit}~5`, {stdio: 'pipe', cwd: 'src'})
     }
   }
 
