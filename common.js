@@ -45,6 +45,11 @@ if (process.platform === 'win32') {
 // Add depot_tools to PATH.
 process.env.PATH = `${path.resolve('vendor', 'depot_tools')}${path.delimiter}${process.env.PATH}`
 
+if (process.platform == 'win32') {
+  // Use Python 2.
+  process.env.PATH = `C:\\Python27${path.delimiter}${process.env.PATH}`
+}
+
 // Helper around execSync.
 const execSyncWrapper = (command, options = {}) => {
   // Print command output by default.
