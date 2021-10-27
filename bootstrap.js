@@ -32,7 +32,7 @@ if (!skipGclient) {
   const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
   const depotToolsDir = path.join('vendor', 'depot_tools')
   if (fs.existsSync(depotToolsDir)) {
-    execSync('git checkout master', {stdio: 'pipe', cwd: depotToolsDir})
+    execSync('git checkout main', {stdio: 'pipe', cwd: depotToolsDir})
     execSync('git pull', {stdio: 'pipe', cwd: depotToolsDir})
   } else {
     execSync(`git clone ${DEPOT_TOOLS_URL} ${depotToolsDir}`)
@@ -51,9 +51,9 @@ if (!skipGclient) {
       const commit = content.substr(content.indexOf("'chromium_version':") + 19)
                             .match(/'([0-9a-h\.]+)'/)[1]
       // Reset.
-      execSync('git checkout master', {stdio: 'pipe', cwd: 'src'})
+      execSync('git checkout main', {stdio: 'pipe', cwd: 'src'})
       execSync('git fetch', {cwd: 'src'})
-      execSync('git reset --hard refs/remotes/origin/master', {stdio: 'pipe', cwd: 'src'})
+      execSync('git reset --hard refs/remotes/origin/main', {stdio: 'pipe', cwd: 'src'})
     }
   }
 
