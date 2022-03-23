@@ -64,7 +64,7 @@ if (!skipGclient) {
     args += ' --force'
   // Calling gclient directly would invoke gclient.bat on Windows, which does
   // not work prefectly under some shells.
-  execSync(`python vendor/depot_tools/gclient.py sync ${args}`)
+  execSync(`vendor/depot_tools/gclient sync ${args}`, {shell: true})
 }
 
 // Fetch build-tools.
