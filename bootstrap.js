@@ -58,13 +58,14 @@ if (!skipGclient) {
   }
 
   // Getting the code.
-  let args = noHistory ? '--no-history'
-                       : '--with_branch_heads --with_tags'
+  const args = noHistory ? ['--no-history']
+                         : ['--with_branch_heads', '--with_tags']
   if (!noForce)
-    args += ' --force'
-  // Calling gclient directly would invoke gclient.bat on Windows, which does
-  // not work prefectly under some shells.
-  execSync(`vendor/depot_tools/gclient sync ${args}`, {shell: true})
+    args.push('--force')
+  let gclient = path.join('vendor', 'depot_tools', 'gclient')
+  if (process.platform === 'win32')
+    gclient += '.bat'
+  spawnSync(gclient,  ['sync'].concat(args), {shell: true})
 }
 
 // Fetch build-tools.
