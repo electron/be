@@ -43,7 +43,9 @@ if (process.platform === 'win32') {
 }
 
 // Add depot_tools to PATH.
+// Add ninja to PATH.
 process.env.PATH = `${path.resolve('vendor', 'depot_tools')}${path.delimiter}${process.env.PATH}`
+process.env.PATH = `${path.resolve('src', 'third_party', 'ninja')}${path.delimiter}${process.env.PATH}`
 
 if (process.platform == 'win32') {
   // Use Python 2.
