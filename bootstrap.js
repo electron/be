@@ -9,9 +9,11 @@ const path = require('path')
 let skipGclient = false
 let noHistory = false
 let noForce = false
+let noElectron = false
 let noGoma = false
 let extraArgs = ''
 let targetCpu = 'x64'
+let target = 'src'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
@@ -19,12 +21,16 @@ for (const arg of argv) {
     noHistory = true
   else if (arg === '--no-force')
     noForce = true
+  else if (arg === '--no-electron')
+    noElectron = true
   else if (arg === '--no-goma')
     noGoma = true
   else if (arg.startsWith('--args='))
     extraArgs = arg.substr(arg.indexOf('=') + 1)
   else if (arg.startsWith('--target-cpu='))
     targetCpu = arg.substr(arg.indexOf('=') + 1)
+  else if (!arg.startsWith('--'))
+    target = arg
 }
 
 if (!skipGclient) {
@@ -89,7 +95,7 @@ if (!noGoma) {
 }
 
 // Switch to src dir.
-process.chdir('src')
+process.chdir(target)
 
 // Generate configurations.
 const configs = {
@@ -99,7 +105,7 @@ const configs = {
 for (const name in configs) {
   const config = targetCpu === 'x64' ? name : `${name}_${targetCpu}`
   let gnArgs = [
-    `import("//electron/build/args/${configs[name]}.gn")`,
+    noElectron ? '' : `import("//electron/build/args/${configs[name]}.gn")`,
     noGoma ? '' : `import("${goma.gnFilePath}")`,
     `target_cpu="${targetCpu}"`,
     extraArgs,

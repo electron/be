@@ -5,16 +5,18 @@ const {argv, execSync} = require('./common')
 const fs = require('fs')
 const os = require('os')
 
-// The configuration to build.
-let config = 'Default'
-if (argv.length >= 1)
-  config = argv[0]
-let target = 'electron'
-if (argv.length >= 2)
-  target = argv[1]
-
-
-const outDir = `src/out/${config}`
+let outDir = 'src/out/Default'
+const args = argv.filter((arg) => {
+  if (arg[0] == arg[0].toUpperCase()) {
+    outDir = `src/out/${arg}`
+    return false
+  } else if (arg.includes('/out/')) {
+    outDir = arg
+    return false
+  } else {
+    return true
+  }
+})
 
 let jobs = os.cpus().length
 const useGoma = fs.readFileSync(outDir + '/args.gn').toString().includes('goma.gn')
@@ -25,4 +27,4 @@ if (useGoma) {
   jobs = 200
 }
 
-execSync(`ninja -j ${jobs} -C ${outDir} ${target}`)
+execSync(`ninja -j ${jobs} -C ${outDir} ${args.join(' ' )}`)
