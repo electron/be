@@ -27,4 +27,8 @@ if (useGoma) {
   jobs = 200
 }
 
+if (args.length == 0) {
+  args.push('electron')
+}
+
 execSync(`ninja -j ${jobs} -C ${outDir} ${args.join(' ' )}`)
