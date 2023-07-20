@@ -7,6 +7,7 @@ const path = require('path')
 
 // Parse args.
 let skipGclient = false
+let runHooks = false
 let noHistory = false
 let noForce = false
 let noElectron = false
@@ -17,6 +18,8 @@ let target = 'src'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
+  else if (arg === '--run-hooks')
+    runHooks = true
   else if (arg === '--no-history')
     noHistory = true
   else if (arg === '--no-force')
@@ -33,6 +36,9 @@ for (const arg of argv) {
     target = arg
 }
 
+let gclient = path.join('vendor', 'depot_tools', 'gclient')
+if (process.platform === 'win32')
+  gclient += '.bat'
 if (!skipGclient) {
   // Fetch depot_tools.
   const DEPOT_TOOLS_URL = 'https://chromium.googlesource.com/chromium/tools/depot_tools.git'
@@ -68,11 +74,11 @@ if (!skipGclient) {
                          : ['--with_branch_heads', '--with_tags']
   if (!noForce)
     args.push('--force')
-  let gclient = path.join('vendor', 'depot_tools', 'gclient')
-  if (process.platform === 'win32')
-    gclient += '.bat'
   spawnSync(gclient,  ['sync'].concat(args), {shell: true})
 }
+
+if (skipGclient && runHooks)
+  spawnSync(gclient,  ['runhooks'], {shell: true})
 
 // Fetch build-tools.
 const BUILD_TOOLS_URL = 'https://github.com/electron/build-tools'
