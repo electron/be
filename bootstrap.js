@@ -80,8 +80,10 @@ const buildToolsDir = path.join('vendor', 'build-tools')
 if (fs.existsSync(buildToolsDir)) {
   execSync('git checkout main', {stdio: 'pipe', cwd: buildToolsDir})
   execSync('git pull', {stdio: 'pipe', cwd: buildToolsDir})
+  execSync('yarn', {stdio: 'pipe', cwd: buildToolsDir})
 } else {
   execSync(`git clone ${BUILD_TOOLS_URL} ${buildToolsDir}`)
+  execSync('yarn', {stdio: 'pipe', cwd: buildToolsDir})
 }
 
 const goma = require('./vendor/build-tools/src/utils/goma')
