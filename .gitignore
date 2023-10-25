@@ -1,5 +1,6 @@
 *.swp
 .gclient_entries
+.gclient_previous_sync_commits
 _gclient_src_*/
 .cipd/
 src/
