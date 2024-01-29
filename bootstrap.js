@@ -7,6 +7,7 @@ const path = require('path')
 
 // Parse args.
 let skipGclient = false
+let resetSrc = true
 let runHooks = false
 let noHistory = false
 let noForce = false
@@ -18,6 +19,8 @@ let target = 'src'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
+  else if (arg === '--no-reset-src')
+    resetSrc = false
   else if (arg === '--run-hooks')
     runHooks = true
   else if (arg === '--no-history')
@@ -57,15 +60,33 @@ if (!skipGclient) {
   // If the repo is already fetched, try to reset it first.
   if (!noForce) {
     const electronDir = path.join('src', 'electron')
-    if (fs.existsSync(electronDir)) {
-      // Get the chromium commit to checkout.
-      const content = String(fs.readFileSync(path.join(electronDir, 'DEPS')))
-      const commit = content.substr(content.indexOf("'chromium_version':") + 19)
-                            .match(/'([0-9a-h\.]+)'/)[1]
+    if (resetSrc && fs.existsSync(electronDir)) {
+      // Get the src commit to checkout.
+      const deps = String(fs.readFileSync(path.join(electronDir, 'DEPS')))
+      const commit = deps.substr(deps.indexOf("'chromium_version':") + 19)
+                         .match(/'([0-9a-h\.]+)'/)[1]
       // Reset.
       execSync('git checkout main', {stdio: 'pipe', cwd: 'src'})
       execSync('git fetch', {cwd: 'src'})
-      execSync('git reset --hard refs/remotes/origin/main', {stdio: 'pipe', cwd: 'src'})
+      execSync(`git reset --hard 5a5dff63a4a4c63b9b18589819bebb2566c85443`, {stdio: 'pipe', cwd: 'src'})
+    }
+    const nodeDir = path.join('src', 'third_party', 'electron_node')
+    if (fs.existsSync(nodeDir)) {
+      // The node dir is somehow messing up with tags, reset to a working commit.
+      execSync('git checkout main', {stdio: 'pipe', cwd: nodeDir})
+      execSync('git fetch', {cwd: nodeDir})
+      execSync('git reset --hard 19064bec34', {stdio: 'pipe', cwd: nodeDir})
+    }
+    const v8Dir = path.join('src', 'v8')
+    if (fs.existsSync(v8Dir)) {
+      // Get the V8 commit to checkout.
+      const deps = String(fs.readFileSync(path.join('src', 'DEPS')))
+      const commit = deps.substr(deps.indexOf("'v8_revision':") + 14)
+                         .match(/'([0-9a-h\.]+)'/)[1]
+      // Reset.
+      execSync('git checkout main', {stdio: 'pipe', cwd: v8Dir})
+      execSync('git fetch', {cwd: v8Dir})
+      execSync(`git reset --hard 95cbef20e2aa556a1ea75431a48b36c4de6b9934`, {stdio: 'pipe', cwd: v8Dir})
     }
   }
 
