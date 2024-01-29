@@ -11,11 +11,6 @@ let resetSrc = true
 let runHooks = false
 let noHistory = false
 let noForce = false
-let noElectron = false
-let noGoma = false
-let extraArgs = ''
-let targetCpu = 'x64'
-let target = 'src'
 for (const arg of argv) {
   if (arg === '--skip-gclient')
     skipGclient = true
@@ -27,16 +22,6 @@ for (const arg of argv) {
     noHistory = true
   else if (arg === '--no-force')
     noForce = true
-  else if (arg === '--no-electron')
-    noElectron = true
-  else if (arg === '--no-goma')
-    noGoma = true
-  else if (arg.startsWith('--args='))
-    extraArgs = arg.substr(arg.indexOf('=') + 1)
-  else if (arg.startsWith('--target-cpu='))
-    targetCpu = arg.substr(arg.indexOf('=') + 1)
-  else if (!arg.startsWith('--'))
-    target = arg
 }
 
 let gclient = path.join('vendor', 'depot_tools', 'gclient')
@@ -100,44 +85,3 @@ if (!skipGclient) {
 
 if (skipGclient && runHooks)
   spawnSync(gclient,  ['runhooks'], {shell: true})
-
-// Fetch build-tools.
-const BUILD_TOOLS_URL = 'https://github.com/electron/build-tools'
-const buildToolsDir = path.join('vendor', 'build-tools')
-if (fs.existsSync(buildToolsDir)) {
-  execSync('git checkout main', {stdio: 'pipe', cwd: buildToolsDir})
-  execSync('git pull', {stdio: 'pipe', cwd: buildToolsDir})
-  execSync('yarn', {stdio: 'pipe', cwd: buildToolsDir})
-} else {
-  execSync(`git clone ${BUILD_TOOLS_URL} ${buildToolsDir}`)
-  execSync('yarn', {stdio: 'pipe', cwd: buildToolsDir})
-}
-
-const goma = require('./vendor/build-tools/src/utils/goma')
-
-// Ensure goma is initialized.
-if (!noGoma) {
-  const thirdPartyDir = path.join(buildToolsDir, 'third_party')
-  if (!fs.existsSync(thirdPartyDir))
-    fs.mkdirSync(thirdPartyDir)
-  goma.downloadAndPrepare({gomaOneForAll: true})
-}
-
-// Switch to src dir.
-process.chdir(target)
-
-// Generate configurations.
-const configs = {
-  'Release': 'release',
-  'Default': 'testing',
-}
-for (const name in configs) {
-  const config = targetCpu === 'x64' ? name : `${name}_${targetCpu}`
-  let gnArgs = [
-    noElectron ? '' : `import("//electron/build/args/${configs[name]}.gn")`,
-    noGoma ? '' : `import("${goma.gnFilePath}")`,
-    `target_cpu="${targetCpu}"`,
-    extraArgs,
-  ].join(' ' )
-  spawnSync('python', ['third_party/depot_tools/gn.py', 'gen', `out/${config}`, `--args=${gnArgs}`])
-}

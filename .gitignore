@@ -2,7 +2,7 @@
 .gclient_entries
 .gclient_previous_sync_commits
 _gclient_src_*/
+.reproxy_cache/
 .cipd/
 src/
 vendor/depot_tools
-vendor/build-tools

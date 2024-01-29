@@ -1,0 +1,3 @@
+[submodule "vendor/build_chromium"]
+	path = vendor/build_chromium
+	url = https://github.com/photoionization/build_chromium

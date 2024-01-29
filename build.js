@@ -1,34 +1,17 @@
 #!/usr/bin/env node
 
-const {argv, execSync} = require('./common')
+const path = require('path')
 
-const fs = require('fs')
-const os = require('os')
+const {argv, spawnSync} = require('./common')
 
-let outDir = 'src/out/Default'
-const args = argv.filter((arg) => {
-  if (arg[0] == arg[0].toUpperCase()) {
-    outDir = `src/out/${arg}`
-    return false
-  } else if (arg.includes('/out/')) {
-    outDir = arg
-    return false
-  } else {
-    return true
-  }
-})
+const buildArgs = [
+  '--src-dir',
+  path.join(__dirname, 'src'),
+  '-C',
+  'out/Default',
+  ...argv,
+]
+if (!argv.find(arg => !args.startsWith('--')))
+  buildArgs.push('electron')
 
-let jobs = os.cpus().length
-const useGoma = fs.readFileSync(outDir + '/args.gn').toString().includes('goma.gn')
-if (useGoma) {
-  const goma = require('./vendor/build-tools/src/utils/goma')
-  goma.auth({goma: 'cluster'})
-  goma.ensure({goma: 'cluster'})
-  jobs = 200
-}
-
-if (args.length == 0) {
-  args.push('electron')
-}
-
-execSync(`ninja -j ${jobs} -C ${outDir} ${args.join(' ' )}`)
+spawnSync('python', [ 'vendor/build_chromium/build.py', ...buildArgs ])
