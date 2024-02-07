@@ -11,7 +11,7 @@ const buildArgs = [
   'out/Default',
   ...argv,
 ]
-if (!argv.find(arg => !args.startsWith('--')))
+if (!argv.find(arg => !arg.startsWith('--')))
   buildArgs.push('electron')
 
 spawnSync('python', [ 'vendor/build_chromium/build.py', ...buildArgs ])
